@@ -40,10 +40,77 @@ clock = pygame.time.Clock()
 
 
 # Тут опишите все классы игры.
-...
+class GameObject:
+    """Класс игрового объекта"""
+
+    
+
+    def __init__(self,  body_color, position=(GRID_WIDTH // 2, GRID_HEIGHT // 2)):
+        self.body_color = body_color
+        self.position = position
+
+    def draw(self):
+        """Метод отвечающий за отрисовку объекта"""
+        pass
+
+
+class Apple(GameObject):
+    """Класс яблока"""
+
+    def __init__(self):
+        gmobj = super().__init__(APPLE_COLOR, self.randomize_position())
+        self.body_color = gmobj.body_color
+        self.position = gmobj.position
+
+    def __randomize_position(self):
+        """Метод для генерации случайной позиции яблока"""
+        x = randint(0, GRID_WIDTH)
+        y = randint(0, GRID_HEIGHT)
+        return (x, y)
+
+    def draw(self):
+        """Метод отвечающий за отрисовку яблока"""
+        rect = pygame.Rect(self.position, (GRID_SIZE, GRID_SIZE))
+        pygame.draw.rect(screen, self.body_color, rect)
+        pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
+
+
+class Snakes(GameObject):
+    """Класс змейки"""
+
+    length = 1
+    positions: list[tuple] = []
+    direction = RIGHT
+    next_direction = None
+
+    def __init__(self):
+        gmobj = super().__init__(SNAKE_COLOR)
+        self.body_color = gmobj.body_color
+        self.positions.append(self.position)
+
+    def draw(self):
+        """Метод отвечающий за отрисовку змейки"""
+        for position in self.positions[:-1]:
+            rect = (pygame.Rect(position, (GRID_SIZE, GRID_SIZE)))
+            pygame.draw.rect(screen, self.body_color, rect)
+            pygame.draw.rect(screen, BORDER_COLOR, rect, 1)
+
+        # Отрисовка головы змейки
+        head_rect = pygame.Rect(self.positions[0], (GRID_SIZE, GRID_SIZE))
+        pygame.draw.rect(screen, self.body_color, head_rect)
+        pygame.draw.rect(screen, BORDER_COLOR, head_rect, 1)
+
+        # Затирание последнего сегмента
+        if self.last:
+            last_rect = pygame.Rect(self.last, (GRID_SIZE, GRID_SIZE))
+            pygame.draw.rect(screen, BOARD_BACKGROUND_COLOR, last_rect)
+
+
+
 
 
 def main():
+    """Основная функция игры"""
     # Инициализация PyGame:
     pygame.init()
     # Тут нужно создать экземпляры классов.
